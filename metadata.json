@@ -1,0 +1,6 @@
+{
+  "name": "SmartShop",
+  "description": "E-Commerce Product Sorting & Search Analyzer based on Design and Analysis of Algorithms (DAA).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

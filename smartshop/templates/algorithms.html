@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+
+{% block title %}About Algorithms – DAA Student Viva Guide{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <div class="badge-category d-inline-block mb-2">
+            <i class="bi bi-mortarboard-fill"></i> DAA Assignment 4 Viva Preparation
+        </div>
+        <h2 class="display-6 fw-bold mb-2">Algorithms Comprehensive Study Guide</h2>
+        <p class="text-muted mx-auto" style="max-width: 720px;">
+            Student-friendly explanations, pseudocode, and step-by-step examples on sample viva dataset: 
+            <strong>₹45,000, ₹12,000, ₹65,000, ₹25,000, ₹18,000</strong>.
+        </p>
+    </div>
+
+    <!-- Quick Navigation Pills -->
+    <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+        <a href="#mergesort" class="btn btn-outline-custom rounded-pill px-4">
+            <i class="bi bi-distribute-vertical me-1"></i> 1. Merge Sort
+        </a>
+        <a href="#quicksort" class="btn btn-outline-custom rounded-pill px-4">
+            <i class="bi bi-lightning-charge-fill me-1"></i> 2. Quick Sort
+        </a>
+        <a href="#binarysearch" class="btn btn-outline-custom rounded-pill px-4">
+            <i class="bi bi-search me-1"></i> 3. Binary Search
+        </a>
+        <a href="#viva" class="btn btn-primary-custom rounded-pill px-4">
+            <i class="bi bi-chat-quote-fill me-1"></i> Viva Questions & Answers
+        </a>
+    </div>
+
+    <!-- 1. MERGE SORT -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white" id="mergesort">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="brand-icon fs-4"><i class="bi bi-distribute-vertical"></i></div>
+            <div>
+                <h3 class="fw-bold mb-0">1. Merge Sort (Divide and Conquer)</h3>
+                <span class="text-muted">Stable, comparison-based sorting algorithm</span>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Definition</h6>
+                <p>
+                    Merge Sort is an efficient, comparison-based, divide-and-conquer algorithm that recursively divides an array into two halves, sorts each half, and merges the sorted sub-arrays into a single ordered list.
+                </p>
+
+                <h6 class="fw-bold text-uppercase text-muted small">How It Works</h6>
+                <ol class="text-muted ps-3">
+                    <li><strong>Divide:</strong> Find the midpoint <code>mid = len // 2</code> and split the product list into Left and Right halves.</li>
+                    <li><strong>Conquer:</strong> Recursively call <code>merge_sort()</code> on both halves until single-element lists remain.</li>
+                    <li><strong>Combine:</strong> Merge the sorted sub-arrays by repeatedly picking the smaller product price.</li>
+                </ol>
+
+                <h6 class="fw-bold text-uppercase text-muted small">Complexity Analysis</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered text-center">
+                        <thead class="table-light">
+                            <tr><th>Best</th><th>Average</th><th>Worst</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>O(n log n)</code></td>
+                                <td><code>O(n log n)</code></td>
+                                <td><code>O(n log n)</code></td>
+                                <td><code>O(n)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Pseudocode</h6>
+                <pre class="bg-light p-3 rounded-3 font-monospace small border"><code>function mergeSort(arr):
+    if length(arr) <= 1:
+        return arr
+    mid = length(arr) / 2
+    left = mergeSort(arr[0..mid])
+    right = mergeSort(arr[mid..end])
+    return merge(left, right)
+
+function merge(left, right):
+    result = []
+    while left and right not empty:
+        if left[0].price <= right[0].price:
+            result.append(left.pop(0))
+        else:
+            result.append(right.pop(0))
+    return result + left + right</code></pre>
+            </div>
+        </div>
+
+        <!-- Viva Example Walkthrough -->
+        <div class="p-3 bg-light-cream rounded-3 border mb-4">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-play-circle-fill text-primary me-2"></i>Viva Example Walkthrough on Sample Assignment Data:</h6>
+            <p class="mb-2 font-monospace small">Input: [₹45,000, ₹12,000, ₹65,000, ₹25,000, ₹18,000]</p>
+            <ul class="small text-muted mb-0 ps-3">
+                <li><strong>Divide:</strong> Left = [45k, 12k], Right = [65k, 25k, 18k]</li>
+                <li><strong>Recurse Left:</strong> [45k] and [12k] merge into [12k, 45k]</li>
+                <li><strong>Recurse Right:</strong> [65k] and [25k, 18k] → [25k, 18k] splits & merges to [18k, 25k] → merges with [65k] to [18k, 25k, 65k]</li>
+                <li><strong>Final Merge:</strong> [12k, 45k] + [18k, 25k, 65k] → <strong>[12k, 18k, 25k, 45k, 65k]</strong></li>
+            </ul>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h6 class="fw-bold text-success small text-uppercase"><i class="bi bi-check-circle me-1"></i> Advantages</h6>
+                <ul class="small text-muted ps-3 mb-0">
+                    <li>Guaranteed O(n log n) runtime even in worst case.</li>
+                    <li>Stable sort (preserves relative order of equal prices).</li>
+                    <li>Ideal for linked lists and external disk sorting.</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="fw-bold text-danger small text-uppercase"><i class="bi bi-x-circle me-1"></i> Limitations</h6>
+                <ul class="small text-muted ps-3 mb-0">
+                    <li>Requires O(n) auxiliary memory for merging.</li>
+                    <li>Higher overhead for small in-memory arrays.</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="fw-bold text-primary small text-uppercase"><i class="bi bi-globe me-1"></i> Real-World Usage</h6>
+                <p class="small text-muted mb-0">
+                    Used in Linux kernel (e.g. <code>lib/list_sort.c</code>), Python's Timsort hybrid, e-commerce distributed external sorting (e.g., millions of products from databases).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. QUICK SORT -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white" id="quicksort">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="brand-icon fs-4" style="background-color: #A06535;"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div>
+                <h3 class="fw-bold mb-0">2. Quick Sort (Partitioning)</h3>
+                <span class="text-muted">High-performance in-memory sorting algorithm</span>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Definition</h6>
+                <p>
+                    Quick Sort is an in-place divide-and-conquer algorithm that selects a "pivot" element and partitions the other elements into two sub-arrays, according to whether their price is less than or greater than the pivot.
+                </p>
+
+                <h6 class="fw-bold text-uppercase text-muted small">How It Works</h6>
+                <ol class="text-muted ps-3">
+                    <li><strong>Choose Pivot:</strong> Select a pivot element (e.g. middle element).</li>
+                    <li><strong>Partition:</strong> Reorder products so all items with price &lt; pivot come before it, and items with price &gt; pivot come after.</li>
+                    <li><strong>Recurse:</strong> Recursively apply the above steps to sub-arrays of smaller and greater items.</li>
+                </ol>
+
+                <h6 class="fw-bold text-uppercase text-muted small">Complexity Analysis</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered text-center">
+                        <thead class="table-light">
+                            <tr><th>Best</th><th>Average</th><th>Worst</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>O(n log n)</code></td>
+                                <td><code>O(n log n)</code></td>
+                                <td><code>O(n²)</code></td>
+                                <td><code>O(log n)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Pseudocode</h6>
+                <pre class="bg-light p-3 rounded-3 font-monospace small border"><code>function quickSort(arr, low, high):
+    if low < high:
+        pi = partition(arr, low, high)
+        quickSort(arr, low, pi - 1)
+        quickSort(arr, pi + 1, high)
+
+function partition(arr, low, high):
+    pivot = arr[high].price
+    i = low - 1
+    for j = low to high - 1:
+        if arr[j].price < pivot:
+            i = i + 1
+            swap(arr[i], arr[j])
+    swap(arr[i + 1], arr[high])
+    return i + 1</code></pre>
+            </div>
+        </div>
+
+        <!-- Viva Example Walkthrough -->
+        <div class="p-3 bg-light-cream rounded-3 border mb-4">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-play-circle-fill text-primary me-2"></i>Viva Example Walkthrough on Sample Assignment Data:</h6>
+            <p class="mb-2 font-monospace small">Input: [₹45,000, ₹12,000, ₹65,000, ₹25,000, ₹18,000]</p>
+            <ul class="small text-muted mb-0 ps-3">
+                <li><strong>Pivot Selection:</strong> Choose middle element ₹65,000 or last element ₹18,000.</li>
+                <li><strong>Partitioning:</strong> Put prices &lt; 18k ([12k]) on left, 18k in middle, &gt; 18k ([45k, 65k, 25k]) on right.</li>
+                <li><strong>Recurse Right:</strong> For [45k, 65k, 25k], choose pivot 25k → left: [], mid: 25k, right: [45k, 65k].</li>
+                <li><strong>Final Concatenation:</strong> [12k] + [18k] + [25k] + [45k] + [65k] → <strong>[12k, 18k, 25k, 45k, 65k]</strong></li>
+            </ul>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h6 class="fw-bold text-success small text-uppercase"><i class="bi bi-check-circle me-1"></i> Advantages</h6>
+                <ul class="small text-muted ps-3 mb-0">
+                    <li>Very fast in practice due to CPU cache locality and low constants.</li>
+                    <li>Space efficient: requires only O(log n) call stack space.</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="fw-bold text-danger small text-uppercase"><i class="bi bi-x-circle me-1"></i> Limitations</h6>
+                <ul class="small text-muted ps-3 mb-0">
+                    <li>Worst case is O(n²) if an extreme pivot is picked continuously.</li>
+                    <li>Not naturally stable.</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="fw-bold text-primary small text-uppercase"><i class="bi bi-globe me-1"></i> Real-World Usage</h6>
+                <p class="small text-muted mb-0">
+                    Default in C's <code>qsort()</code>, JavaScript V8 sort for primitives, real-time gaming engines and financial matching systems.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. BINARY SEARCH -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white" id="binarysearch">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="brand-icon fs-4" style="background-color: #5C3A21;"><i class="bi bi-search"></i></div>
+            <div>
+                <h3 class="fw-bold mb-0">3. Binary Search</h3>
+                <span class="text-muted">Logarithmic-time search on sorted collections</span>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Definition</h6>
+                <p>
+                    Binary Search is an optimal search algorithm that finds the position of a target value within a sorted array by repeatedly comparing the target value to the middle element and halving the search space.
+                </p>
+
+                <h6 class="fw-bold text-uppercase text-muted small">Prerequisite</h6>
+                <p class="text-danger fw-semibold">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Array MUST be sorted first! (In our project, we sort via Merge Sort first).
+                </p>
+
+                <h6 class="fw-bold text-uppercase text-muted small">Complexity Analysis</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered text-center">
+                        <thead class="table-light">
+                            <tr><th>Best</th><th>Average</th><th>Worst</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>O(1)</code></td>
+                                <td><code>O(log n)</code></td>
+                                <td><code>O(log n)</code></td>
+                                <td><code>O(1)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h6 class="fw-bold text-uppercase text-muted small">Pseudocode</h6>
+                <pre class="bg-light p-3 rounded-3 font-monospace small border"><code>function binarySearch(arr, target):
+    low = 0
+    high = length(arr) - 1
+
+    while low <= high:
+        mid = (low + high) / 2
+        if arr[mid].price == target:
+            return mid   // Found!
+        else if target < arr[mid].price:
+            high = mid - 1 // Search left
+        else:
+            low = mid + 1  // Search right
+
+    return -1 // Not found</code></pre>
+            </div>
+        </div>
+
+        <!-- Viva Example Walkthrough -->
+        <div class="p-3 bg-light-cream rounded-3 border mb-4">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-play-circle-fill text-primary me-2"></i>Viva Example Walkthrough (Search Target = ₹25,000):</h6>
+            <p class="mb-2 font-monospace small">Sorted Array: [0: ₹12,000, 1: ₹18,000, 2: ₹25,000, 3: ₹45,000, 4: ₹65,000]</p>
+            <ul class="small text-muted mb-0 ps-3">
+                <li><strong>Step 1:</strong> Low=0, High=4 → Mid = 2. Middle value = <strong>₹25,000</strong>.</li>
+                <li><strong>Check:</strong> Target ₹25,000 == Middle ₹25,000 → <strong>MATCH FOUND in 1 comparison (Best Case O(1))!</strong></li>
+                <li><em>If searching ₹18,000:</em> Step 1 Mid=2 (25k) → 18k &lt; 25k (go left, High=1). Step 2: Mid=0 (12k) → 18k &gt; 12k (go right, Low=1). Step 3: Mid=1 (18k) → <strong>Found in 3 steps!</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 4. Viva Prep Section -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" id="viva">
+        <h4 class="fw-bold mb-3"><i class="bi bi-question-circle-fill text-primary me-2"></i>Frequently Asked DAA Viva Questions</h4>
+        <div class="accordion" id="vivaAccordion">
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#viva1">
+                        Q1: Why can't we use Binary Search on an unsorted product list?
+                    </button>
+                </h2>
+                <div id="viva1" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body text-muted small">
+                        Binary Search relies on the monotonicity invariant: if the target is greater than the middle element, it is guaranteed to be in the right half only if the list is sorted. On an unsorted list, eliminating a half would discard potentially matching items, leading to incorrect results.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#viva2">
+                        Q2: What is the main difference between Merge Sort and Quick Sort space complexity?
+                    </button>
+                </h2>
+                <div id="viva2" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body text-muted small">
+                        Merge Sort requires <strong>O(n) auxiliary space</strong> to hold the sub-arrays while merging them. In contrast, Quick Sort is an <strong>in-place sort</strong> that only uses <strong>O(log n) stack memory</strong> for recursive function calls.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#viva3">
+                        Q3: When does Quick Sort degrade to O(n²)?
+                    </button>
+                </h2>
+                <div id="viva3" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body text-muted small">
+                        When the pivot chosen is always the minimum or maximum element (such as choosing the first or last element of an already sorted array). This causes partitions of size 0 and n-1, creating a recurrence tree of depth n. Choosing the middle element or random pivot mitigates this.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#viva4">
+                        Q4: Why does our app show slightly varying execution times on consecutive runs?
+                    </button>
+                </h2>
+                <div id="viva4" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body text-muted small">
+                        Real-world CPU execution times fluctuate by fractions of a millisecond due to operating system thread context switches, CPU frequency scaling (thermal throttling or turbo boost), memory cache hits/misses, and background processes. This demonstrates why algorithmic analysis relies on asymptotic Big-O notation rather than raw clock time alone.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

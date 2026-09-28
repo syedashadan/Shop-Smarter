@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+{% block title %}Products Catalog – SmartShop DAA Algorithm Sorting{% endblock %}
+
+{% block content %}
+<div class="container py-4" id="products-catalog-section">
+
+    <!-- Top Breadcrumb & Actions -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+                <a href="{{ url_for('index') }}" class="text-decoration-none text-muted">Home</a>
+                <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                <span class="text-primary-theme fw-semibold">Products</span>
+            </div>
+            <h2 class="fw-extrabold mb-1">E-Commerce Product Catalog</h2>
+            <p class="text-muted small mb-0">Sorted and filtered strictly using pure manual DAA algorithms without standard library helpers.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('add_product') }}" class="btn btn-primary-custom rounded-pill px-3 py-2 shadow-xs d-flex align-items-center gap-1.5">
+                <i class="bi bi-plus-lg"></i> <span>Add Product</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="btn btn-outline-custom rounded-pill px-3 py-2 d-flex align-items-center gap-1.5">
+                <i class="bi bi-search"></i> <span>Binary Search</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Multi-Filter Control Panel -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <form method="GET" action="{{ url_for('products') }}" id="filterForm">
+            <!-- Hidden preserve sort parameter -->
+            <input type="hidden" name="sort" value="{{ current_sort }}">
+
+            <div class="row g-3 align-items-end">
+                <!-- Search Bar (Name, ID, Category) -->
+                <div class="col-lg-4">
+                    <label for="searchQueryInput" class="form-label fw-semibold small text-muted-theme">Search Products</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" id="searchQueryInput" name="q" 
+                               value="{{ search_query }}" placeholder="Search by name, ID or category...">
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="col-sm-6 col-lg-2">
+                    <label for="categorySelect" class="form-label fw-semibold small text-muted-theme">Category</label>
+                    <select class="form-select" id="categorySelect" name="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Min Price -->
+                <div class="col-6 col-sm-3 col-lg-2">
+                    <label for="minPriceInput" class="form-label fw-semibold small text-muted-theme">Min Price (₹)</label>
+                    <input type="number" class="form-control" id="minPriceInput" name="min_price" 
+                           value="{{ min_price }}" placeholder="0" min="0">
+                </div>
+
+                <!-- Max Price -->
+                <div class="col-6 col-sm-3 col-lg-2">
+                    <label for="maxPriceInput" class="form-label fw-semibold small text-muted-theme">Max Price (₹)</label>
+                    <input type="number" class="form-control" id="maxPriceInput" name="max_price" 
+                           value="{{ max_price }}" placeholder="200000" min="0">
+                </div>
+
+                <!-- Action Filter Buttons -->
+                <div class="col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-custom w-100 rounded-3">
+                        <i class="bi bi-filter me-1"></i> Filter
+                    </button>
+                    <a href="{{ url_for('products') }}" class="btn btn-light border rounded-3 px-3" title="Clear Filters">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Quick Toggles -->
+            <div class="d-flex flex-wrap align-items-center gap-3 mt-3 pt-3 border-top">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="stock" value="in_stock" id="stockFilter" {% if stock_filter == 'in_stock' %}checked{% endif %} onchange="document.getElementById('filterForm').submit()">
+                    <label class="form-check-label small text-muted-theme" for="stockFilter">
+                        In Stock Only
+                    </label>
+                </div>
+
+                <div class="vr text-muted d-none d-sm-block"></div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-muted-theme">Min Rating:</span>
+                    <select class="form-select form-select-sm" name="min_rating" style="width: 100px;" onchange="document.getElementById('filterForm').submit()">
+                        <option value="">Any</option>
+                        <option value="4.5" {% if min_rating == '4.5' %}selected{% endif %}>★ 4.5+</option>
+                        <option value="4.0" {% if min_rating == '4.0' %}selected{% endif %}>★ 4.0+</option>
+                        <option value="3.5" {% if min_rating == '3.5' %}selected{% endif %}>★ 3.5+</option>
+                    </select>
+                </div>
+
+                <div class="ms-auto small fw-bold text-price">
+                    {{ total_found }} products found
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- DAA Sorting Control Toolbar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 theme-card">
+        <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="badge-mini-icon bg-primary text-white"><i class="bi bi-arrow-down-up"></i></div>
+                <div>
+                    <span class="fw-bold text-uppercase small text-muted-theme d-block">SORT PRODUCTS</span>
+                    <span class="small text-muted" style="font-size: 0.75rem;">Backend manual execution (No built-in sort)</span>
+                </div>
+            </div>
+
+            <!-- Sort Buttons -->
+            <div class="d-flex flex-wrap gap-2">
+                <!-- Merge Sort Asc -->
+                <a href="{{ url_for('products', sort='merge_asc', q=search_query, category=selected_category, min_price=min_price, max_price=max_price, stock=stock_filter, min_rating=min_rating) }}" 
+                   class="btn btn-sm rounded-pill px-3 {% if current_sort == 'merge_asc' %}btn-primary-custom shadow-xs{% else %}btn-outline-custom{% endif %}">
+                    <i class="bi bi-diagram-3-fill me-1"></i> Merge Sort: Price Low → High
+                </a>
+
+                <!-- Merge Sort Desc -->
+                <a href="{{ url_for('products', sort='merge_desc', q=search_query, category=selected_category, min_price=min_price, max_price=max_price, stock=stock_filter, min_rating=min_rating) }}" 
+                   class="btn btn-sm rounded-pill px-3 {% if current_sort == 'merge_desc' %}btn-primary-custom shadow-xs{% else %}btn-outline-custom{% endif %}">
+                    <i class="bi bi-diagram-3 me-1"></i> Merge Sort: Price High → Low
+                </a>
+
+                <!-- Quick Sort Asc -->
+                <a href="{{ url_for('products', sort='quick_asc', q=search_query, category=selected_category, min_price=min_price, max_price=max_price, stock=stock_filter, min_rating=min_rating) }}" 
+                   class="btn btn-sm rounded-pill px-3 {% if current_sort == 'quick_asc' %}btn-primary-custom shadow-xs{% else %}btn-outline-custom{% endif %}">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Quick Sort: Price Low → High
+                </a>
+
+                <!-- Quick Sort Desc -->
+                <a href="{{ url_for('products', sort='quick_desc', q=search_query, category=selected_category, min_price=min_price, max_price=max_price, stock=stock_filter, min_rating=min_rating) }}" 
+                   class="btn btn-sm rounded-pill px-3 {% if current_sort == 'quick_desc' %}btn-primary-custom shadow-xs{% else %}btn-outline-custom{% endif %}">
+                    <i class="bi bi-lightning-charge me-1"></i> Quick Sort: Price High → Low
+                </a>
+
+                <!-- Reset Button -->
+                <a href="{{ url_for('products', sort='reset', q=search_query, category=selected_category) }}" 
+                   class="btn btn-sm btn-light border rounded-pill px-3" title="Reset to original order">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Execution Metrics Banner (shown whenever sorting is applied) -->
+    {% if metrics %}
+    <div class="metrics-banner mb-4 shadow-sm p-4 rounded-4 animate-fade-in">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1.5">
+                    <span class="badge bg-dark text-white rounded-pill px-3 py-1 fw-bold">{{ metrics.algorithm }}</span>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5">{{ metrics.order }}</span>
+                </div>
+                <h5 class="fw-bold mb-0">Algorithm Execution Benchmark</h5>
+                <span class="text-muted small">Measured live on server via Python <code>time.perf_counter()</code></span>
+            </div>
+
+            <!-- Stats metric pills -->
+            <div class="d-flex flex-wrap gap-2 gap-sm-3">
+                <div class="metric-box text-center">
+                    <span class="text-muted small d-block" style="font-size: 0.7rem;">INPUT SIZE</span>
+                    <strong class="fs-6 font-monospace">{{ metrics.count }} items</strong>
+                </div>
+                <div class="metric-box text-center">
+                    <span class="text-muted small d-block" style="font-size: 0.7rem;">EXECUTION TIME</span>
+                    <strong class="fs-6 text-primary font-monospace">{{ metrics.execution_time_ms }} ms</strong>
+                </div>
+                <div class="metric-box text-center">
+                    <span class="text-muted small d-block" style="font-size: 0.7rem;">COMPARISONS</span>
+                    <strong class="fs-6 text-warning-emphasis font-monospace">{{ metrics.comparisons }}</strong>
+                </div>
+                <div class="metric-box text-center">
+                    <span class="text-muted small d-block" style="font-size: 0.7rem;">TIME COMPLEXITY</span>
+                    <strong class="fs-6 font-monospace">{{ metrics.time_complexity }}</strong>
+                </div>
+                <div class="metric-box text-center">
+                    <span class="text-muted small d-block" style="font-size: 0.7rem;">SPACE COMPLEXITY</span>
+                    <strong class="fs-6 font-monospace">{{ metrics.space_complexity }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 4-Column Responsive Product Cards Grid -->
+    <!-- Desktop: 4 per row (col-lg-3), Tablet: 2-3 per row (col-md-4 / col-sm-6), Mobile: 1-2 per row (col-12 col-sm-6) -->
+    <div class="row g-4">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card card-custom h-100 theme-card position-relative shadow-xs">
+                    <!-- Image -->
+                    <div class="product-img-wrapper position-relative">
+                        <img src="{{ product.imageUrl }}" alt="{{ product.name }}" loading="lazy">
+                        <span class="position-absolute top-0 start-0 m-2.5 badge bg-dark bg-opacity-75 rounded-pill px-2.5 py-1 small">
+                            {{ product.id }}
+                        </span>
+                        <span class="position-absolute top-0 end-0 m-2.5 badge bg-white text-dark rounded-pill px-2 py-0.5 small shadow-xs">
+                            <i class="bi bi-star-fill text-warning me-1"></i>{{ product.rating }}
+                        </span>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-3.5 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="badge-category">{{ product.category }}</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small" style="font-size: 0.7rem;">
+                                In Stock: {{ product.stock }}
+                            </span>
+                        </div>
+
+                        <h6 class="card-title fw-bold mb-1 text-truncate" title="{{ product.name }}">{{ product.name }}</h6>
+                        
+                        <div class="mt-auto pt-2.5 border-top">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <div>
+                                    <span class="text-muted small d-block" style="font-size: 0.68rem;">PRICE</span>
+                                    <span class="fs-5 fw-bold text-price">₹{{ "{:,.0f}".format(product.price) }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Buttons: View & Delete -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-custom btn-sm rounded-pill flex-grow-1 view-product-btn"
+                                        data-id="{{ product.id }}"
+                                        data-name="{{ product.name }}"
+                                        data-category="{{ product.category }}"
+                                        data-price="₹{{ '{:,.0f}'.format(product.price) }}"
+                                        data-rating="{{ product.rating }}"
+                                        data-stock="{{ product.stock }}"
+                                        data-image="{{ product.imageUrl }}">
+                                    <i class="bi bi-eye me-1"></i> View
+                                </button>
+                                
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 delete-confirm-btn"
+                                        data-id="{{ product.id }}"
+                                        data-name="{{ product.name }}"
+                                        data-url="{{ url_for('delete_product', product_id=product.id) }}"
+                                        title="Delete Product">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="p-5 rounded-4 theme-card border text-muted">
+                    <i class="bi bi-box-seam fs-1 d-block mb-3 text-muted"></i>
+                    <h5 class="fw-bold">No Products Found</h5>
+                    <p class="small">No products match your current search query and filter criteria.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-sm btn-primary-custom rounded-pill px-3">
+                        Clear All Filters
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Algorithm Lab – SmartShop Visualizer{% endblock %}
+
+{% block content %}
+<div class="container py-4" id="algorithm-lab-page">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+                <a href="{{ url_for('index') }}" class="text-decoration-none text-muted">Home</a>
+                <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                <span class="text-primary-theme fw-semibold">Algorithm Lab</span>
+            </div>
+            <h2 class="fw-extrabold mb-1">Interactive Algorithm Visualizer</h2>
+            <p class="text-muted small mb-0">Step-by-step visual playback of Merge Sort, Quick Sort, and Binary Search operations.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                <i class="bi bi-eye-fill me-1"></i> Real-Time State Tracer
+            </span>
+        </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <div class="row g-3 align-items-center">
+            <!-- Select Algorithm -->
+            <div class="col-sm-6 col-lg-3">
+                <label for="visualizerAlgorithmSelect" class="form-label fw-bold small text-muted-theme">Algorithm</label>
+                <select class="form-select rounded-3" id="visualizerAlgorithmSelect">
+                    <option value="merge_sort">Merge Sort (Divide & Conquer)</option>
+                    <option value="quick_sort">Quick Sort (Partition Pivot)</option>
+                    <option value="binary_search">Binary Search (Logarithmic Search)</option>
+                </select>
+            </div>
+
+            <!-- Target Price (Only shown when Binary Search is selected) -->
+            <div class="col-sm-6 col-lg-3 d-none" id="targetPriceGroup">
+                <label for="binarySearchTargetInput" class="form-label fw-bold small text-muted-theme">Target Price (₹)</label>
+                <input type="number" class="form-control rounded-3" id="binarySearchTargetInput" placeholder="e.g. 25000" value="25000">
+            </div>
+
+            <!-- Data Size -->
+            <div class="col-6 col-lg-2" id="dataSizeGroup">
+                <label for="dataSizeSelect" class="form-label fw-bold small text-muted-theme">Data Size</label>
+                <select class="form-select rounded-3" id="dataSizeSelect">
+                    <option value="8">8 Products</option>
+                    <option value="12" selected>12 Products</option>
+                    <option value="16">16 Products</option>
+                    <option value="24">24 Products</option>
+                </select>
+            </div>
+
+            <!-- Animation Speed -->
+            <div class="col-6 col-lg-2">
+                <label for="speedSelect" class="form-label fw-bold small text-muted-theme">Speed</label>
+                <select class="form-select rounded-3" id="speedSelect">
+                    <option value="1200">Slow (1.2s)</option>
+                    <option value="600" selected>Medium (0.6s)</option>
+                    <option value="200">Fast (0.2s)</option>
+                </select>
+            </div>
+
+            <!-- Action Controls (Play, Step, Reset) -->
+            <div class="col-12 col-lg-4 d-flex gap-2 pt-2 pt-lg-4">
+                <button type="button" class="btn btn-primary-custom rounded-pill px-3.5 flex-grow-1" id="playPauseBtn">
+                    <i class="bi bi-play-fill me-1" id="playIcon"></i> <span id="playText">Play</span>
+                </button>
+                <button type="button" class="btn btn-light border rounded-pill px-3" id="stepBackBtn" title="Step Backward">
+                    <i class="bi bi-skip-backward-fill"></i>
+                </button>
+                <button type="button" class="btn btn-light border rounded-pill px-3" id="stepForwardBtn" title="Step Forward">
+                    <i class="bi bi-skip-forward-fill"></i>
+                </button>
+                <button type="button" class="btn btn-light border rounded-pill px-3" id="resetShuffleBtn" title="Reset / Shuffle Array">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Step & Action Status Banner -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge bg-dark rounded-pill px-3 py-1" id="activeAlgorithmBadge">Merge Sort</span>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5" id="stepProgressBadge">Step 0 of 0</span>
+                </div>
+                <h5 class="fw-bold mb-0 text-truncate" id="currentExplanationText" style="max-width: 650px;">
+                    Ready to begin visualization. Press Play or Step Forward.
+                </h5>
+            </div>
+
+            <div class="d-flex gap-3 text-center">
+                <div class="metric-box px-3 py-2">
+                    <span class="text-muted small d-block" style="font-size: 0.68rem;">COMPARISONS</span>
+                    <strong class="fs-5 text-warning-emphasis font-monospace" id="liveComparisonCounter">0</strong>
+                </div>
+                <div class="metric-box px-3 py-2">
+                    <span class="text-muted small d-block" style="font-size: 0.68rem;">SWAPS / MERGES</span>
+                    <strong class="fs-5 text-primary font-monospace" id="liveSwapCounter">0</strong>
+                </div>
+                <div class="metric-box px-3 py-2">
+                    <span class="text-muted small d-block" style="font-size: 0.68rem;">TIME COMPLEXITY</span>
+                    <strong class="fs-5 font-monospace" id="liveComplexityDisplay">O(n log n)</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Visual Stage (Vertical Bars) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Visual Execution Stage</h5>
+            <!-- Legend Indicators -->
+            <div class="d-flex flex-wrap gap-2 small">
+                <span class="d-inline-flex align-items-center gap-1.5"><span class="legend-dot" style="background: #E2E8F0;"></span> Unsorted</span>
+                <span class="d-inline-flex align-items-center gap-1.5"><span class="legend-dot" style="background: #F59E0B;"></span> Comparing</span>
+                <span class="d-inline-flex align-items-center gap-1.5"><span class="legend-dot" style="background: #0EA5E9;"></span> Pivot / Mid</span>
+                <span class="d-inline-flex align-items-center gap-1.5"><span class="legend-dot" style="background: #8B5CF6;"></span> Sub-Array Range</span>
+                <span class="d-inline-flex align-items-center gap-1.5"><span class="legend-dot" style="background: #10B981;"></span> Sorted / Found</span>
+            </div>
+        </div>
+
+        <!-- Bars Stage Container -->
+        <div class="visualizer-stage-wrapper position-relative d-flex align-items-end justify-content-center gap-2 pt-5 pb-3 border rounded-4 bg-light overflow-hidden" 
+             id="visualizerStage" style="min-height: 380px;">
+            <!-- Bars rendered dynamically by JS -->
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top text-muted small">
+            <span>Bars are scaled proportionally to product prices in rupees (₹)</span>
+            <span class="font-monospace" id="arrayStatusText">Status: Idle</span>
+        </div>
+    </div>
+
+    <!-- Educational Explanation Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 theme-card">
+        <h5 class="fw-bold mb-3 text-primary-theme"><i class="bi bi-book-half me-2"></i>Understanding How This Algorithm Operates</h5>
+        <div id="algorithmExplanationBox" class="small text-muted">
+            <!-- Dynamic explanation text injected by JS based on selected algorithm -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Embed catalog products for visualizer initial state
+    window.CATALOG_PRODUCTS = {{ products | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+
+{% block title %}Binary Search by Price – SmartShop DAA{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+                <a href="{{ url_for('index') }}" class="text-decoration-none text-muted">Home</a>
+                <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                <span class="text-primary-theme fw-semibold">Binary Search</span>
+            </div>
+            <h2 class="fw-extrabold mb-1">Logarithmic Binary Search Engine</h2>
+            <p class="text-muted small mb-0">Search products precisely by exact target price using manual O(log n) divide and conquer.</p>
+        </div>
+
+        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 align-self-start align-self-md-auto">
+            <i class="bi bi-check2-circle me-1"></i> Data Pre-Sorted with Merge Sort
+        </span>
+    </div>
+
+    <!-- Binary Search Input Form Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <form method="GET" action="{{ url_for('search') }}">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-7">
+                    <label for="searchPriceInput" class="form-label fw-bold small text-muted-theme">
+                        Enter Exact Target Price to Search (₹)
+                    </label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted">₹</span>
+                        <input type="number" step="any" min="1" class="form-control border-start-0" id="searchPriceInput" 
+                               name="price" value="{{ target_price or '' }}" placeholder="e.g. 25000, 45000, 1499, 89999" required>
+                    </div>
+                    <div class="form-text small">
+                        Quick targets to test: 
+                        <a href="{{ url_for('search', price=25000) }}" class="text-decoration-none text-price fw-semibold">₹25,000</a> •
+                        <a href="{{ url_for('search', price=45000) }}" class="text-decoration-none text-price fw-semibold">₹45,000</a> •
+                        <a href="{{ url_for('search', price=1499) }}" class="text-decoration-none text-price fw-semibold">₹1,499</a> •
+                        <a href="{{ url_for('search', price=89999) }}" class="text-decoration-none text-price fw-semibold">₹89,999</a> •
+                        <a href="{{ url_for('search', price=55555) }}" class="text-decoration-none text-muted fw-semibold">₹55,555 (Not in catalog)</a>
+                    </div>
+                </div>
+
+                <div class="col-md-5 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-custom btn-lg w-100 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-search"></i> Execute Binary Search
+                    </button>
+                    {% if target_price %}
+                    <a href="{{ url_for('search') }}" class="btn btn-light btn-lg border rounded-3 px-3" title="Clear">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+
+        <!-- Pre-requisite Explanatory Box -->
+        <div class="mt-4 p-3 rounded-3 bg-subtle-box border d-flex align-items-center gap-3">
+            <i class="bi bi-info-circle-fill text-primary fs-4"></i>
+            <div class="small text-muted">
+                <strong>Prerequisite Requirement for Binary Search:</strong>
+                Binary Search requires data to be arranged in sorted order to validate decision boundaries.
+                SmartShop automatically pre-sorts the catalog using manual <strong>Merge Sort</strong> (Price: Low → High) before executing the logarithmic search.
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results Section -->
+    {% if search_result %}
+    <div class="row g-4 mb-4 animate-fade-in">
+        <!-- Execution Metric Cards -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-4 theme-card">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            {% if search_result.found %}
+                                <span class="badge bg-success rounded-pill px-3 py-1">Target Price Found</span>
+                            {% else %}
+                                <span class="badge bg-danger rounded-pill px-3 py-1">Not in Catalog</span>
+                            {% endif %}
+                            <span class="badge bg-dark rounded-pill px-2.5">O(log n) Complexity</span>
+                        </div>
+                        <h4 class="fw-bold mb-0">Search Results for ₹{{ "{:,.0f}".format(search_result.searched_price) }}</h4>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 gap-sm-3">
+                        <div class="metric-box text-center">
+                            <span class="text-muted small d-block" style="font-size: 0.7rem;">COMPARISONS</span>
+                            <strong class="fs-5 text-warning-emphasis font-monospace">{{ search_result.comparisons }}</strong>
+                        </div>
+                        <div class="metric-box text-center">
+                            <span class="text-muted small d-block" style="font-size: 0.7rem;">STEPS TAKEN</span>
+                            <strong class="fs-5 font-monospace">{{ search_result.steps|length }}</strong>
+                        </div>
+                        <div class="metric-box text-center">
+                            <span class="text-muted small d-block" style="font-size: 0.7rem;">EXECUTION TIME</span>
+                            <strong class="fs-5 text-primary font-monospace">{{ search_result.execution_time_ms }} ms</strong>
+                        </div>
+                        <div class="metric-box text-center">
+                            <span class="text-muted small d-block" style="font-size: 0.7rem;">CATALOG SIZE</span>
+                            <strong class="fs-5 font-monospace">{{ sorted_products|length }} items</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matched Product Card(s) -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 theme-card h-100">
+                <h5 class="fw-bold mb-3">
+                    {% if search_result.found %}
+                        Matched Products ({{ search_result.matched_products|length }})
+                    {% else %}
+                        No Exact Price Match
+                    {% endif %}
+                </h5>
+
+                {% if search_result.found %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for p in search_result.matched_products %}
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3 border bg-subtle-box">
+                            <img src="{{ p.imageUrl }}" alt="{{ p.name }}" class="rounded-3 shadow-xs" style="width: 70px; height: 70px; object-fit: cover;">
+                            <div class="flex-grow-1 overflow-hidden">
+                                <span class="badge-category mb-1 d-inline-block">{{ p.category }}</span>
+                                <h6 class="fw-bold mb-0 text-truncate">{{ p.name }}</h6>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <span class="text-price fw-bold">₹{{ "{:,.0f}".format(p.price) }}</span>
+                                    <span class="text-muted small">Stock: {{ p.stock }}</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-primary-custom rounded-pill px-3 view-product-btn"
+                                    data-id="{{ p.id }}"
+                                    data-name="{{ p.name }}"
+                                    data-category="{{ p.category }}"
+                                    data-price="₹{{ '{:,.0f}'.format(p.price) }}"
+                                    data-rating="{{ p.rating }}"
+                                    data-stock="{{ p.stock }}"
+                                    data-image="{{ p.imageUrl }}">
+                                View
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-search fs-1 d-block mb-2 text-muted"></i>
+                        <p class="small mb-0">No item currently retails at exactly ₹{{ "{:,.0f}".format(search_result.searched_price) }}.</p>
+                        <p class="small text-muted mt-1">Binary Search confirmed this conclusively in only {{ search_result.comparisons }} comparisons across {{ sorted_products|length }} products.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Binary Search Step-by-Step Execution Trace Table -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 theme-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Step-by-Step Binary Search Trace</h5>
+                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1 small">Logged Execution</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle small mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Step</th>
+                                <th>Low [idx]</th>
+                                <th>Mid [idx]</th>
+                                <th>High [idx]</th>
+                                <th>Value at Mid</th>
+                                <th>Action Taken</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for step in search_result.steps %}
+                            <tr>
+                                <td class="fw-bold text-center">{{ step.step }}</td>
+                                <td class="font-monospace text-primary">#{{ step.low }}</td>
+                                <td class="font-monospace fw-bold text-warning-emphasis">#{{ step.mid }}</td>
+                                <td class="font-monospace text-danger">#{{ step.high }}</td>
+                                <td class="font-monospace fw-bold text-price">₹{{ "{:,.0f}".format(step.mid_price) }}</td>
+                                <td>
+                                    <code class="d-block text-dark">{{ step.action }}</code>
+                                    <span class="text-muted" style="font-size: 0.72rem;">{{ step.explanation }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Why Binary Search is O(log n) Explanatory Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 theme-card mb-4">
+        <h5 class="fw-bold mb-3 text-primary-theme"><i class="bi bi-mortarboard-fill text-primary me-2"></i>Why Binary Search is O(log n) — Viva Concepts</h5>
+        <div class="row g-4 small text-muted">
+            <div class="col-md-6">
+                <p>
+                    <strong>1. Halving the Problem Space:</strong>
+                    At each iteration, Binary Search calculates \( \text{mid} = \lfloor \frac{\text{low} + \text{high}}{2} \rfloor \).
+                    By comparing the target against the middle element, exactly half the remaining search array is immediately discarded.
+                </p>
+                <p>
+                    <strong>2. Mathematical Derivation:</strong>
+                    After \( k \) iterations, the size of remaining elements is \( \frac{n}{2^k} \).
+                    In the worst case, the search terminates when \( \frac{n}{2^k} = 1 \implies 2^k = n \implies k = \log_2 n \).
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <strong>3. Linear Search vs Binary Search:</strong>
+                    In a linear search of 32 products, worst-case requires 32 comparisons.
+                    In Binary Search, \( \lceil \log_2 32 \rceil = 5 \) comparisons maximum!
+                    For 1,000,000 items, Linear Search takes up to 1,000,000 comparisons while Binary Search takes at most <strong>20 comparisons</strong>!
+                </p>
+                <p>
+                    <strong>4. Precondition Awareness:</strong>
+                    Because Binary Search relies on order transitivity (\( A[i] \le A[j] \)), running it on an unsorted list produces erroneous results. Hence pre-sorting via Merge Sort is mandatory.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pre-Sorted Catalog View (Visual Reference) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 theme-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold mb-0">Pre-Sorted Search Space (Ascending by Price)</h5>
+                <span class="text-muted small">The exact sequence traversed during the binary search execution</span>
+            </div>
+            <span class="badge bg-light border text-dark rounded-pill">{{ sorted_products|length }} Elements</span>
+        </div>
+
+        <div class="table-responsive" style="max-height: 360px; overflow-y: auto;">
+            <table class="table table-sm table-hover align-middle mb-0 font-monospace small">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>Index</th>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price (₹)</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in sorted_products %}
+                    <tr {% if target_price and p.price == target_price %}class="table-warning fw-bold"{% endif %}>
+                        <td class="text-muted">#{{ loop.index0 }}</td>
+                        <td>{{ p.id }}</td>
+                        <td class="font-sans fw-semibold">{{ p.name }}</td>
+                        <td><span class="badge-category" style="font-size: 0.68rem;">{{ p.category }}</span></td>
+                        <td class="text-price fw-bold">₹{{ "{:,.0f}".format(p.price) }}</td>
+                        <td>{{ p.stock }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

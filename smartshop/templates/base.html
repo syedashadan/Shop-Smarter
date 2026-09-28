@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmartShop – Shop Smarter. Search Faster. Understand Algorithms.{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="theme-body">
+
+    <!-- Sticky Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-2 py-lg-3">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}" id="navbar-brand-logo">
+                <div class="brand-icon">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </div>
+                <div>
+                    <span class="brand-title">SMARTSHOP</span>
+                    <span class="brand-subtitle d-none d-sm-block">Shop Smarter • Understand Algorithms</span>
+                </div>
+            </a>
+
+            <!-- Mobile Action Bar & Toggler -->
+            <div class="d-flex align-items-center gap-2 d-lg-none">
+                <button type="button" class="btn btn-sm btn-icon-theme theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i class="bi bi-moon-stars-fill theme-icon"></i>
+                </button>
+                <a href="{{ url_for('products') }}" class="btn btn-sm btn-icon-theme" title="Search Products">
+                    <i class="bi bi-search"></i>
+                </a>
+                <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-label="Toggle navigation">
+                    <i class="bi bi-list fs-2"></i>
+                </button>
+            </div>
+
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.endpoint == 'products' %}active{% endif %}" href="{{ url_for('products') }}">
+                            Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.endpoint == 'analyzer' %}active{% endif %}" href="{{ url_for('analyzer') }}">
+                            Algorithm Lab
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.endpoint == 'performance' %}active{% endif %}" href="{{ url_for('performance') }}">
+                            Performance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.endpoint in ['algorithms_guide', 'about'] %}active{% endif %}" href="{{ url_for('algorithms_guide') }}">
+                            About
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right Utility Icons & CTA -->
+                <div class="d-none d-lg-flex align-items-center gap-2">
+                    <a href="{{ url_for('search') }}" class="btn btn-icon-theme" title="Binary Search by Price" id="nav-search-btn">
+                        <i class="bi bi-search"></i>
+                    </a>
+                    
+                    <button type="button" class="btn btn-icon-theme theme-toggle-btn" title="Toggle Light/Dark Theme" id="nav-theme-toggle" aria-label="Toggle Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-icon-theme position-relative" title="Cart / Wishlist" id="nav-cart-btn" onclick="showToast('Cart simulation: Ready for checkout integration.')">
+                        <i class="bi bi-bag"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                            3
+                        </span>
+                    </button>
+
+                    <a href="{{ url_for('add_product') }}" class="btn btn-primary-custom btn-sm px-3 py-2 rounded-pill ms-2 d-flex align-items-center gap-1.5" id="nav-add-product-btn">
+                        <i class="bi bi-plus-circle"></i> Add Product
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+        <div id="liveToast" class="toast align-items-center text-bg-dark border-0 rounded-4 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2" id="toastMessage">
+                    <i class="bi bi-check-circle-fill text-success fs-5"></i> Action completed successfully.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <div>{{ message }}</div>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Product Details Modal (Re-usable for all views) -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden theme-card">
+                <div class="modal-header border-0 pb-0">
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-bold" id="modalCategory">Category</span>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-6 text-center">
+                            <img id="modalImage" src="" alt="Product Image" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: 100%; object-fit: cover;">
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted small fw-semibold" id="modalId">PROD-ID</span>
+                            <h3 class="fw-bold mt-1 mb-2 text-primary-theme" id="modalName">Product Name</h3>
+                            
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="fs-2 fw-bold text-price" id="modalPrice">₹0</div>
+                                <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2.5 py-1">
+                                    <i class="bi bi-star-fill text-warning me-1"></i> <span id="modalRating">0.0</span> / 5.0
+                                </span>
+                            </div>
+
+                            <p class="text-muted small mb-3" id="modalDescription">High quality product in catalog analyzed with DAA algorithms.</p>
+                            
+                            <div class="p-3 rounded-3 bg-subtle-box mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small">Stock Status:</span>
+                                    <strong class="text-success small" id="modalStock">In Stock</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Supported Sort Algorithms:</span>
+                                    <span class="badge bg-dark rounded-pill" style="font-size: 0.7rem;">Merge Sort • Quick Sort</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-primary-custom rounded-pill px-4 flex-grow-1" onclick="showToast('Added to cart!'); bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide();">
+                                    <i class="bi bi-bag-plus me-1"></i> Add to Cart
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">
+                                    Back to Products
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 rounded-4 shadow-lg text-center p-3 theme-card">
+                <div class="modal-body">
+                    <div class="mb-3 text-danger">
+                        <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Delete Product?</h5>
+                    <p class="text-muted small mb-4">Are you sure you want to delete <strong id="deleteCandidateName" class="text-dark">this item</strong>? This will remove it from the SQLite database.</p>
+                    
+                    <form id="deleteProductForm" method="POST" action="">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button type="button" class="btn btn-light rounded-pill px-3 flex-grow-1 border" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger rounded-pill px-3 flex-grow-1">Delete Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Footer (NO Terms and Conditions) -->
+    <footer class="footer-custom mt-5 py-5 border-top">
+        <div class="container">
+            <div class="row g-4 justify-content-between align-items-center">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;">
+                            <i class="bi bi-diagram-3-fill"></i>
+                        </div>
+                        <span class="brand-title fs-5">SMARTSHOP</span>
+                    </div>
+                    <p class="text-muted small mb-0" style="max-width: 440px;">
+                        An interactive DAA project for understanding sorting and searching algorithms.
+                        Demonstrates manual Merge Sort, Quick Sort, and Binary Search without standard libraries.
+                    </p>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="d-flex flex-wrap justify-content-lg-end gap-3 gap-md-4">
+                        <a href="{{ url_for('index') }}" class="footer-link">Home</a>
+                        <a href="{{ url_for('products') }}" class="footer-link">Products</a>
+                        <a href="{{ url_for('analyzer') }}" class="footer-link">Algorithm Lab</a>
+                        <a href="{{ url_for('performance') }}" class="footer-link">Performance</a>
+                        <a href="{{ url_for('algorithms_guide') }}" class="footer-link">About</a>
+                        <a href="{{ url_for('search') }}" class="footer-link">Binary Search</a>
+                    </div>
+                    <p class="text-muted small text-lg-end mt-3 mb-0">
+                        Designed for DAA Assignment 4 & Viva Examination • Python 3.11 • Flask • SQLite
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

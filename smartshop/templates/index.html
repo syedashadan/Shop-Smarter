@@ -1,0 +1,476 @@
+{% extends 'base.html' %}
+
+{% block title %}SmartShop – Shop Smarter. Search Faster. Understand Algorithms.{% endblock %}
+
+{% block content %}
+<!-- Premium Hero Section -->
+<section class="hero-section position-relative overflow-hidden py-5 border-bottom">
+    <div class="container py-lg-4 position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-5">
+            <!-- Left Hero Content -->
+            <div class="col-lg-6 text-center text-lg-start">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill hero-badge mb-3 shadow-xs">
+                    <span class="pulse-dot"></span>
+                    <span class="small fw-bold">Design & Analysis of Algorithms • Assignment 4</span>
+                </div>
+
+                <h1 class="display-4 fw-extrabold hero-title mb-3">
+                    Shop Smarter.<br>
+                    <span class="text-gradient-accent">Understand the Algorithm.</span>
+                </h1>
+
+                <p class="lead text-muted-theme mb-4 pe-lg-4" style="font-size: 1.15rem; line-height: 1.6;">
+                    Explore products, search instantly and visualize how sorting and searching algorithms power modern e-commerce.
+                </p>
+
+                <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3">
+                    <a href="{{ url_for('products') }}" class="btn btn-primary-custom btn-lg px-4 py-3 rounded-pill d-inline-flex align-items-center gap-2 shadow-sm" id="hero-explore-btn">
+                        <i class="bi bi-bag-check-fill"></i>
+                        <span>Explore Products</span>
+                    </a>
+                    <a href="{{ url_for('analyzer') }}" class="btn btn-outline-custom btn-lg px-4 py-3 rounded-pill d-inline-flex align-items-center gap-2" id="hero-lab-btn">
+                        <i class="bi bi-cpu-fill"></i>
+                        <span>Open Algorithm Lab</span>
+                    </a>
+                </div>
+
+                <!-- Trust Micro-Badges -->
+                <div class="d-flex align-items-center justify-content-center justify-content-lg-start gap-4 mt-4 pt-2 text-muted small">
+                    <div class="d-flex align-items-center gap-1.5">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span>Pure Manual DAA Code</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5">
+                        <i class="bi bi-stopwatch-fill text-primary"></i>
+                        <span>Microsecond Profiling</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5">
+                        <i class="bi bi-database-check text-warning"></i>
+                        <span>SQLite Powered</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Hero Visual Showcase with Floating Cards -->
+            <div class="col-lg-6">
+                <div class="hero-visual-wrapper position-relative mx-auto" style="max-width: 520px;">
+                    <!-- Main Showcase Card -->
+                    <div class="hero-main-card card theme-card border-0 rounded-5 shadow-xl overflow-hidden">
+                        <div class="position-relative" style="height: 280px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80" alt="MacBook Air M2 Showcase" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1.5 small">
+                                Live In Catalog
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge-category">Laptops</span>
+                                <span class="small text-muted fw-bold"><i class="bi bi-star-fill text-warning me-1"></i>4.8 Rating</span>
+                            </div>
+                            <h5 class="fw-bold mb-2">Apple MacBook Air M2</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small d-block" style="font-size: 0.72rem;">PRICE</span>
+                                    <span class="fs-4 fw-bold text-price">₹89,999</span>
+                                </div>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small">
+                                    In Stock (12 Units)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Floating Card 1: Merge Sort Benchmark -->
+                    <div class="floating-badge-card float-top-left shadow-lg rounded-4 p-3 theme-card">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <div class="badge-mini-icon bg-primary text-white"><i class="bi bi-lightning-charge-fill"></i></div>
+                            <span class="fw-bold small">Merge Sort</span>
+                            <span class="badge bg-success-subtle text-success rounded-pill ms-auto" style="font-size: 0.65rem;">O(n log n)</span>
+                        </div>
+                        <div class="text-muted small" style="font-size: 0.75rem;">Divides into sub-arrays, merges in O(n)</div>
+                    </div>
+
+                    <!-- Floating Floating Card 2: Binary Search Live -->
+                    <div class="floating-badge-card float-bottom-right shadow-lg rounded-4 p-3 theme-card">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <div class="badge-mini-icon bg-warning text-dark"><i class="bi bi-search"></i></div>
+                            <span class="fw-bold small">Binary Search</span>
+                            <span class="badge bg-primary-subtle text-primary rounded-pill ms-auto" style="font-size: 0.65rem;">O(log n)</span>
+                        </div>
+                        <div class="text-muted small" style="font-size: 0.75rem;">Target: ₹25,000 → Found in 3 steps</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Section: Three Core Capabilities -->
+<section class="py-5 bg-subtle-section border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="text-uppercase fw-bold text-price small tracking-wide">Algorithmic Advantages</span>
+            <h2 class="fw-bold mt-1">Engineered for Academic Rigor & Performance</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Experience how fundamental computer science concepts solve practical electronic commerce challenges.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1: Smart Search -->
+            <div class="col-md-4">
+                <div class="card h-100 theme-card feature-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="feature-icon-wrapper mb-3" style="background: rgba(43, 108, 176, 0.1); color: #2B6CB0;">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">SMART SEARCH</h5>
+                    <p class="text-muted small mb-3">Find products quickly using efficient searching techniques.</p>
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark border rounded-pill small">Logarithmic: O(log n)</span>
+                        <a href="{{ url_for('search') }}" class="text-price fw-semibold small text-decoration-none">
+                            Try Search <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Smart Sorting -->
+            <div class="col-md-4">
+                <div class="card h-100 theme-card feature-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="feature-icon-wrapper mb-3" style="background: rgba(123, 75, 39, 0.1); color: var(--brown-primary);">
+                        <i class="bi bi-funnel-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">SMART SORTING</h5>
+                    <p class="text-muted small mb-3">Compare Merge Sort and Quick Sort on real product data.</p>
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark border rounded-pill small">Divide & Conquer</span>
+                        <a href="{{ url_for('products') }}?sort=merge_asc" class="text-price fw-semibold small text-decoration-none">
+                            Sort Catalog <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3: Algorithm Lab -->
+            <div class="col-md-4">
+                <div class="card h-100 theme-card feature-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="feature-icon-wrapper mb-3" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
+                        <i class="bi bi-bar-chart-steps"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">ALGORITHM LAB</h5>
+                    <p class="text-muted small mb-3">Visualize how DAA algorithms work step by step.</p>
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark border rounded-pill small">Interactive Traces</span>
+                        <a href="{{ url_for('analyzer') }}" class="text-price fw-semibold small text-decoration-none">
+                            Open Visualizer <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dynamic Statistics Section (Real SQLite Data) -->
+<section class="py-5 border-bottom">
+    <div class="container py-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">Live Database Metrics</h3>
+                <p class="text-muted small mb-0">Dynamic aggregates computed directly from persistent SQLite records</p>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 align-self-start align-self-md-auto">
+                <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> Active Database Connection
+            </span>
+        </div>
+
+        <div class="row g-4">
+            <!-- Stat 1: Total Products -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card h-100 theme-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted-theme fw-semibold small text-uppercase">Total Products</span>
+                        <div class="stat-icon"><i class="bi bi-boxes"></i></div>
+                    </div>
+                    <h2 class="fw-extrabold mb-1 counter" data-target="{{ total_products }}">{{ total_products }}</h2>
+                    <span class="text-muted small">Items currently stored in SQLite</span>
+                </div>
+            </div>
+
+            <!-- Stat 2: Categories -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card h-100 theme-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted-theme fw-semibold small text-uppercase">Categories</span>
+                        <div class="stat-icon"><i class="bi bi-tags-fill"></i></div>
+                    </div>
+                    <h2 class="fw-extrabold mb-1 counter" data-target="{{ total_categories }}">{{ total_categories }}</h2>
+                    <span class="text-muted small">Laptops, Phones, Wearables, etc.</span>
+                </div>
+            </div>
+
+            <!-- Stat 3: Lowest Price -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card h-100 theme-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted-theme fw-semibold small text-uppercase">Lowest Price</span>
+                        <div class="stat-icon text-success"><i class="bi bi-arrow-down-circle-fill"></i></div>
+                    </div>
+                    {% if cheapest_product %}
+                        <h2 class="fw-extrabold mb-1 text-success">₹{{ "{:,.0f}".format(cheapest_product.price) }}</h2>
+                        <span class="text-muted small text-truncate d-block" title="{{ cheapest_product.name }}">{{ cheapest_product.name }}</span>
+                    {% else %}
+                        <h2 class="fw-extrabold mb-1 text-success">₹0</h2>
+                        <span class="text-muted small">N/A</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Stat 4: Highest Price -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card h-100 theme-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted-theme fw-semibold small text-uppercase">Highest Price</span>
+                        <div class="stat-icon text-price"><i class="bi bi-arrow-up-circle-fill"></i></div>
+                    </div>
+                    {% if most_expensive_product %}
+                        <h2 class="fw-extrabold mb-1 text-price">₹{{ "{:,.0f}".format(most_expensive_product.price) }}</h2>
+                        <span class="text-muted small text-truncate d-block" title="{{ most_expensive_product.name }}">{{ most_expensive_product.name }}</span>
+                    {% else %}
+                        <h2 class="fw-extrabold mb-1 text-price">₹0</h2>
+                        <span class="text-muted small">N/A</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-5 bg-subtle-section border-bottom">
+    <div class="container py-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-price small">Handpicked Selection</span>
+                <h3 class="fw-bold mb-1">Featured Products</h3>
+                <p class="text-muted small mb-0">Representative catalog items representing diverse price tiers</p>
+            </div>
+            <a href="{{ url_for('products') }}" class="btn btn-outline-custom rounded-pill px-4">
+                View All {{ total_products }} Products <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for p in featured_products %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-custom h-100 theme-card position-relative">
+                    <div class="product-img-wrapper position-relative">
+                        <img src="{{ p.imageUrl }}" alt="{{ p.name }}" loading="lazy">
+                        <span class="position-absolute top-0 start-0 m-2.5 badge bg-dark bg-opacity-75 rounded-pill px-2.5 py-1 small">
+                            {{ p.id }}
+                        </span>
+                        <span class="position-absolute top-0 end-0 m-2.5 badge bg-white text-dark rounded-pill px-2.5 py-1 small shadow-xs">
+                            <i class="bi bi-star-fill text-warning me-1"></i>{{ p.rating }}
+                        </span>
+                    </div>
+                    <div class="card-body p-3.5 d-flex flex-column">
+                        <span class="badge-category mb-2 align-self-start">{{ p.category }}</span>
+                        <h6 class="card-title fw-bold mb-1 text-truncate" title="{{ p.name }}">{{ p.name }}</h6>
+                        
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted small d-block" style="font-size: 0.7rem;">PRICE</span>
+                                <span class="fs-5 fw-bold text-price">₹{{ "{:,.0f}".format(p.price) }}</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-primary-custom rounded-pill px-3 view-product-btn"
+                                    data-id="{{ p.id }}"
+                                    data-name="{{ p.name }}"
+                                    data-category="{{ p.category }}"
+                                    data-price="₹{{ '{:,.0f}'.format(p.price) }}"
+                                    data-rating="{{ p.rating }}"
+                                    data-stock="{{ p.stock }}"
+                                    data-image="{{ p.imageUrl }}">
+                                View Product
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Category Section -->
+<section class="py-5 border-bottom">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <span class="text-uppercase fw-bold text-price small">Explore By Department</span>
+            <h3 class="fw-bold mt-1">Shop by Category</h3>
+            <p class="text-muted mx-auto" style="max-width: 550px;">Click any department to filter the catalog and analyze algorithmic sort behavior on that subset.</p>
+        </div>
+
+        <div class="row g-3 g-md-4">
+            {% set categories_list = [
+                ('Laptops', 'bi-laptop', '6 Products', 'High-performance computing'),
+                ('Smartphones', 'bi-phone', '5 Products', 'Flagship 5G devices'),
+                ('Headphones', 'bi-headphones', '5 Products', 'ANC wireless audio'),
+                ('Smartwatches', 'bi-smartwatch', '4 Products', 'Fitness & health wearables'),
+                ('Cameras', 'bi-camera', '3 Products', 'Mirrorless & action cameras'),
+                ('Tablets', 'bi-tablet', '3 Products', 'Retina display tablets'),
+                ('Gaming', 'bi-controller', '2 Products', 'Consoles & gaming rigs'),
+                ('Accessories', 'bi-mouse', '4 Products', 'Peripherals & power')
+            ] %}
+
+            {% for cat_name, cat_icon, cat_count, cat_desc in categories_list %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ url_for('products') }}?category={{ cat_name }}" class="text-decoration-none">
+                    <div class="card theme-card category-card border-0 rounded-4 p-3.5 text-center h-100 shadow-xs">
+                        <div class="category-icon mx-auto mb-2">
+                            <i class="bi {{ cat_icon }}"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1 text-primary-theme">{{ cat_name }}</h6>
+                        <span class="text-muted small d-block" style="font-size: 0.75rem;">{{ cat_count }}</span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section (3-Step Workflow) -->
+<section class="py-5 bg-subtle-section border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="text-uppercase fw-bold text-price small">Process Overview</span>
+            <h3 class="fw-bold mt-1">How SmartShop Works</h3>
+            <p class="text-muted mx-auto" style="max-width: 550px;">A seamless bridge between high-quality e-commerce and computer science algorithms.</p>
+        </div>
+
+        <div class="row g-4 text-center">
+            <!-- Step 1 -->
+            <div class="col-md-4">
+                <div class="workflow-card p-4 rounded-4 theme-card h-100 shadow-xs">
+                    <div class="workflow-step-badge mx-auto mb-3">1</div>
+                    <div class="workflow-icon mb-3"><i class="bi bi-shop"></i></div>
+                    <h5 class="fw-bold mb-2">1. Browse Products</h5>
+                    <p class="text-muted small mb-0">Explore our catalog of 32+ tech products with prices ranging from ₹1,499 to ₹1,85,000.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="col-md-4">
+                <div class="workflow-card p-4 rounded-4 theme-card h-100 shadow-xs">
+                    <div class="workflow-step-badge mx-auto mb-3">2</div>
+                    <div class="workflow-icon mb-3"><i class="bi bi-arrow-down-up"></i></div>
+                    <h5 class="fw-bold mb-2">2. Sort or Search</h5>
+                    <p class="text-muted small mb-0">Apply manual Merge Sort or Quick Sort, or enter a target price for logarithmic Binary Search.</p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="col-md-4">
+                <div class="workflow-card p-4 rounded-4 theme-card h-100 shadow-xs">
+                    <div class="workflow-step-badge mx-auto mb-3">3</div>
+                    <div class="workflow-icon mb-3"><i class="bi bi-graph-up-arrow"></i></div>
+                    <h5 class="fw-bold mb-2">3. Analyze the Algorithm</h5>
+                    <p class="text-muted small mb-0">Inspect real comparisons, microsecond execution times, space complexities, and step traces.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Algorithm Preview Section -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <span class="text-uppercase fw-bold text-price small">Core DAA Implementations</span>
+            <h3 class="fw-bold mt-1">Sorting & Searching Algorithms</h3>
+            <p class="text-muted mx-auto" style="max-width: 600px;">The three foundational algorithms powering SmartShop, implemented purely by hand.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Algorithm 1: Merge Sort -->
+            <div class="col-lg-4">
+                <div class="card h-100 theme-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-bold">Divide & Conquer</span>
+                        <span class="badge bg-dark rounded-pill">Stable</span>
+                    </div>
+                    <h4 class="fw-bold mb-2">Merge Sort</h4>
+                    <p class="text-muted small mb-3">
+                        Recursively divides the product array into two halves, sorts each half independently, and combines them in sorted order.
+                    </p>
+                    <div class="p-3 rounded-3 bg-subtle-box mb-4">
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Best / Avg / Worst:</span>
+                            <strong class="font-monospace">O(n log n)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Auxiliary Space:</span>
+                            <strong class="font-monospace">O(n)</strong>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('products') }}?sort=merge_asc" class="btn btn-outline-custom w-100 rounded-pill mt-auto">
+                        <i class="bi bi-play-circle me-1"></i> Try Merge Sort
+                    </a>
+                </div>
+            </div>
+
+            <!-- Algorithm 2: Quick Sort -->
+            <div class="col-lg-4">
+                <div class="card h-100 theme-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3 py-1 fw-bold">Partition Based</span>
+                        <span class="badge bg-dark rounded-pill">In-Place</span>
+                    </div>
+                    <h4 class="fw-bold mb-2">Quick Sort</h4>
+                    <p class="text-muted small mb-3">
+                        Chooses a pivot element and partitions the array into products cheaper and pricier than the pivot, then sorts recursively.
+                    </p>
+                    <div class="p-3 rounded-3 bg-subtle-box mb-4">
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Best / Average:</span>
+                            <strong class="font-monospace">O(n log n)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Worst Case:</span>
+                            <strong class="font-monospace text-danger">O(n²)</strong>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('products') }}?sort=quick_asc" class="btn btn-outline-custom w-100 rounded-pill mt-auto">
+                        <i class="bi bi-lightning-charge me-1"></i> Try Quick Sort
+                    </a>
+                </div>
+            </div>
+
+            <!-- Algorithm 3: Binary Search -->
+            <div class="col-lg-4">
+                <div class="card h-100 theme-card border-0 rounded-4 p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-bold">Search Algorithm</span>
+                        <span class="badge bg-dark rounded-pill">Sorted Only</span>
+                    </div>
+                    <h4 class="fw-bold mb-2">Binary Search</h4>
+                    <p class="text-muted small mb-3">
+                        Searches target price by halving the search space on each comparison. Requires the catalog array to be sorted first.
+                    </p>
+                    <div class="p-3 rounded-3 bg-subtle-box mb-4">
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Time Complexity:</span>
+                            <strong class="font-monospace text-success">O(log n)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Space Complexity:</span>
+                            <strong class="font-monospace">O(1)</strong>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('search') }}" class="btn btn-outline-custom w-100 rounded-pill mt-auto">
+                        <i class="bi bi-search me-1"></i> Try Binary Search
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+{% block title %}Algorithm Performance Benchmark – SmartShop DAA{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js for scientific execution time vs dataset size visualization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+                <a href="{{ url_for('index') }}" class="text-decoration-none text-muted">Home</a>
+                <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                <span class="text-primary-theme fw-semibold">Performance</span>
+            </div>
+            <h2 class="fw-extrabold mb-1">Algorithm Performance Benchmark</h2>
+            <p class="text-muted small mb-0">Empirical time complexity analysis: Merge Sort vs Quick Sort on identical product datasets.</p>
+        </div>
+
+        <div class="d-flex gap-2 align-items-center">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                <i class="bi bi-cpu me-1"></i> Python <code>time.perf_counter()</code>
+            </span>
+        </div>
+    </div>
+
+    <!-- Dataset Size Selection Buttons -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h5 class="fw-bold mb-1">Select Dataset Benchmark Size</h5>
+                <span class="text-muted small">Generates identical deterministically pseudo-random product arrays for fair comparison:</span>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                {% for sz in [10, 30, 50, 100, 500, 1000] %}
+                <a href="{{ url_for('performance', size=sz) }}" 
+                   class="btn btn-sm rounded-pill px-3.5 py-2 font-monospace fw-bold {% if selected_size == sz %}btn-primary-custom shadow-sm{% else %}btn-light border text-dark{% endif %}">
+                    {{ sz }} items
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Execution Spotlight on Selected Size -->
+    <div class="row g-4 mb-4">
+        <!-- Merge Sort Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 theme-card h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="badge-mini-icon bg-primary text-white"><i class="bi bi-diagram-3-fill"></i></div>
+                        <h4 class="fw-bold mb-0">Merge Sort</h4>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-bold">O(n log n)</span>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    Guaranteed stability and consistent \( O(n \log n) \) worst-case via divide-and-conquer sub-array merging.
+                </p>
+
+                <div class="p-3 rounded-3 bg-subtle-box mb-3">
+                    <div class="row text-center g-2">
+                        <div class="col-6">
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">EXECUTION TIME</span>
+                            <span class="fs-4 fw-extrabold text-primary font-monospace">{{ benchmark.merge_sort.execution_time_ms }} ms</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">COMPARISONS</span>
+                            <span class="fs-4 fw-extrabold text-dark font-monospace">{{ benchmark.merge_sort.comparisons }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="small text-muted border-top pt-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Space Complexity:</span>
+                        <strong class="font-monospace">O(n) auxiliary memory</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Stability:</span>
+                        <strong class="text-success">Stable (preserves equal order)</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Sort Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 theme-card h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="badge-mini-icon bg-warning text-dark"><i class="bi bi-lightning-charge-fill"></i></div>
+                        <h4 class="fw-bold mb-0">Quick Sort</h4>
+                    </div>
+                    <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3 py-1 fw-bold">O(n log n) avg</span>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    In-place partition sorting around a pivot; typically lower overhead due to tight memory locality.
+                </p>
+
+                <div class="p-3 rounded-3 bg-subtle-box mb-3">
+                    <div class="row text-center g-2">
+                        <div class="col-6">
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">EXECUTION TIME</span>
+                            <span class="fs-4 fw-extrabold text-warning-emphasis font-monospace">{{ benchmark.quick_sort.execution_time_ms }} ms</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted small d-block" style="font-size: 0.72rem;">COMPARISONS</span>
+                            <span class="fs-4 fw-extrabold text-dark font-monospace">{{ benchmark.quick_sort.comparisons }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="small text-muted border-top pt-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Space Complexity:</span>
+                        <strong class="font-monospace">O(log n) call stack</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Stability:</span>
+                        <strong class="text-muted">Unstable by default</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparative Verdict Banner -->
+    <div class="alert alert-light border rounded-4 shadow-sm p-4 mb-4 theme-card">
+        <div class="d-flex align-items-center gap-3">
+            <div class="brand-icon" style="background: #28a745;">
+                <i class="bi bi-trophy-fill"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Benchmark Result for {{ selected_size }} Products: 
+                    <span class="text-success">{{ benchmark.faster }}</span> was faster by {{ benchmark.time_difference_ms }} ms
+                </h5>
+                <p class="text-muted small mb-0">
+                    Both algorithms performed on the exact same randomized input array. Merge Sort executed {{ benchmark.merge_sort.comparisons }} comparisons versus {{ benchmark.quick_sort.comparisons }} comparisons in Quick Sort.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Comparison Matrix Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Multi-Dataset Scalability Matrix</h5>
+            <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1 small">Comparative Analysis</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3">Dataset Size</th>
+                        <th class="py-3">Merge Sort Time (ms)</th>
+                        <th class="py-3">Quick Sort Time (ms)</th>
+                        <th class="py-3">Merge Comparisons</th>
+                        <th class="py-3">Quick Comparisons</th>
+                        <th class="py-3">Faster Algorithm</th>
+                        <th class="py-3">Delta (ms)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in matrix %}
+                    <tr {% if row.dataset_size == selected_size %}class="table-active fw-bold"{% endif %}>
+                        <td class="font-monospace fw-bold">{{ row.dataset_size }} items</td>
+                        <td class="font-monospace text-primary">{{ row.merge_sort.execution_time_ms }} ms</td>
+                        <td class="font-monospace text-warning-emphasis">{{ row.quick_sort.execution_time_ms }} ms</td>
+                        <td class="font-monospace text-muted">{{ row.merge_sort.comparisons }}</td>
+                        <td class="font-monospace text-muted">{{ row.quick_sort.comparisons }}</td>
+                        <td>
+                            <span class="badge {% if row.faster == 'Merge Sort' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning-emphasis{% endif %} rounded-pill px-2.5 py-1">
+                                {{ row.faster }}
+                            </span>
+                        </td>
+                        <td class="font-monospace small">{{ row.time_difference_ms }} ms</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Visual Chart: Execution Time vs Dataset Size -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 theme-card">
+        <h5 class="fw-bold mb-3">Empirical Execution Time vs Dataset Size</h5>
+        <div style="height: 320px;">
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Viva & Scientific Explanation Section -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 theme-card">
+        <h5 class="fw-bold mb-3 text-primary-theme"><i class="bi bi-lightbulb-fill text-warning me-2"></i>Why Performance Varies in Real Systems</h5>
+        <div class="row g-4 small text-muted">
+            <div class="col-md-6">
+                <h6 class="fw-bold text-dark mb-2">1. Theoretical Complexity vs. Real Execution</h6>
+                <p>
+                    Asymptotic notation (\( O(n \log n) \)) describes growth rate as \( n \to \infty \) ignoring constant factors (\( c \cdot g(n) \)).
+                    In practical execution on Python 3.11, constant factors such as function call overhead, list allocation, and memory cache misses heavily influence the measured clock time.
+                </p>
+                <h6 class="fw-bold text-dark mb-2">2. Memory Overhead of Merge Sort</h6>
+                <p>
+                    Merge Sort requires auxiliary space \( O(n) \) to allocate sub-arrays during splitting and merging. Memory allocation in Python has a non-negligible cost, which can cause Quick Sort to execute faster for small to medium datasets.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="fw-bold text-dark mb-2">3. Pivot Selection in Quick Sort</h6>
+                <p>
+                    Quick Sort's worst-case time is \( O(n^2) \) if the pivot is repeatedly chosen poorly (e.g. smallest or largest element on sorted inputs). SmartShop selects the median/middle element to guarantee balanced partitions.
+                </p>
+                <h6 class="fw-bold text-dark mb-2">4. Micro-architectural Caching</h6>
+                <p>
+                    Quick Sort performs in-place operations with sequential cache access, giving modern CPU L1/L2 data caches better hit rates than algorithms requiring dynamic allocation.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('performanceChart');
+        if (!ctx) return;
+
+        const matrixData = {{ matrix | tojson }};
+        const labels = matrixData.map(d => `${d.dataset_size} items`);
+        const mergeTimes = matrixData.map(d => d.merge_sort.execution_time_ms);
+        const quickTimes = matrixData.map(d => d.quick_sort.execution_time_ms);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Merge Sort (ms)',
+                        data: mergeTimes,
+                        borderColor: '#2B6CB0',
+                        backgroundColor: 'rgba(43, 108, 176, 0.1)',
+                        tension: 0.3,
+                        borderWidth: 2.5,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: false
+                    },
+                    {
+                        label: 'Quick Sort (ms)',
+                        data: quickTimes,
+                        borderColor: '#D97706',
+                        backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                        tension: 0.3,
+                        borderWidth: 2.5,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.dataset.label}: ${context.raw} ms`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'Execution Time (Milliseconds)' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
